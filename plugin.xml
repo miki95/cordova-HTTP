@@ -68,6 +68,7 @@
 
         <config-file target="AndroidManifest.xml" parent="/manifest">
             <uses-permission android:name="android.permission.INTERNET" />
+            <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
         </config-file>
 
         <source-file src="src/android/com/synconset/CordovaHTTP/CordovaHttp.java" target-dir="src/com/synconset" />
@@ -77,6 +78,7 @@
         <source-file src="src/android/com/synconset/CordovaHTTP/CordovaHttpPostJson.java" target-dir="src/com/synconset" />
         <source-file src="src/android/com/synconset/CordovaHTTP/CordovaHttpPutJson.java" target-dir="src/com/synconset" />
         <source-file src="src/android/com/synconset/CordovaHTTP/CordovaHttpUpload.java" target-dir="src/com/synconset" />
+        <source-file src="src/android/com/synconset/CordovaHTTP/CordovaHttpMultipartForm.java" target-dir="src/com/synconset" />
         <source-file src="src/android/com/synconset/CordovaHTTP/CordovaHttpDownload.java" target-dir="src/com/synconset" />
         <source-file src="src/android/com/synconset/CordovaHTTP/CordovaHttpPlugin.java" target-dir="src/com/synconset" />
         <source-file src="src/android/com/synconset/CordovaHTTP/HttpRequest.java" target-dir="src/com/github/kevinsawicki/http" />

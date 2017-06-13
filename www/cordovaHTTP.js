@@ -70,6 +70,10 @@ var http = {
         headers = mergeHeaders(this.headers, headers);
         return exec(success, failure, "CordovaHttpPlugin", "uploadFile", [url, params, headers, filePath, name]);
     },
+    multipartForm: function(url, params, files, headers, success, failure) {
+        headers = mergeHeaders(this.headers, headers);
+        return exec(success, failure, "CordovaHttpPlugin", "multipartForm", [url, params, files, headers]);
+    },
     downloadFile: function(url, params, headers, filePath, success, failure) {
         /*
          *
@@ -180,6 +184,9 @@ if (typeof angular !== "undefined") {
             },
             downloadFile: function(url, params, headers, filePath) {
                 return makePromise(http.downloadFile, [url, params, headers, filePath], true);
+            },
+            multipartForm: function(url, params, files, headers) {
+                return makePromise(http.multipartForm, [url, params, files, headers], true);
             }
         };
         return cordovaHTTP;
