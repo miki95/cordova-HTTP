@@ -54,7 +54,7 @@ public class CordovaHttpMultipartForm extends CordovaHttp implements Runnable {
                     String mimeType = mimeTypeMap.getMimeTypeFromExtension(ext);
                     request.part(name, filename, mimeType, new File(uri));
                 } catch (URISyntaxException e) {
-                    this.respondWithError("There was an error loading the file " + filePath);
+                    this.respondWithError("There was an error loading the file " + filePath + ".\n" + e.getLocalizedMessage);
                     return;
                 }
             }
