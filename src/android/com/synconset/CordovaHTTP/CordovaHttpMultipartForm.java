@@ -25,6 +25,7 @@ import com.github.kevinsawicki.http.HttpRequest;
 import com.github.kevinsawicki.http.HttpRequest.HttpRequestException;
 
 public class CordovaHttpMultipartForm extends CordovaHttp implements Runnable {
+
     private Map<String, String> files;
 
     public CordovaHttpMultipartForm(String urlString, Map<?, ?> params, Map<String, String> files, Map<String, String> headers, CallbackContext callbackContext) {
@@ -44,19 +45,13 @@ public class CordovaHttpMultipartForm extends CordovaHttp implements Runnable {
             for (Entry<String, String> entry: files.entrySet()) {
                 String name = entry.getKey();
                 String filePath = entry.getValue();
-                try {
-                    URI uri = new URI(filePath);
-                    int index = filePath.lastIndexOf('/');
-                    String filename = filePath.substring(index + 1);
-                    index = filePath.lastIndexOf('.');
-                    String ext = filePath.substring(index + 1);
-                    MimeTypeMap mimeTypeMap = MimeTypeMap.getSingleton();
-                    String mimeType = mimeTypeMap.getMimeTypeFromExtension(ext);
-                    request.part(name, filename, mimeType, new File(uri));
-                } catch (URISyntaxException e) {
-                    this.respondWithError("There was an error loading the file " + filePath);
-                    return;
-                }
+                int index = filePath.lastIndexOf('/');
+                String filename = filePath.substring(index + 1);
+                index = filePath.lastIndexOf('.');
+                String ext = filePath.substring(index + 1);
+                MimeTypeMap mimeTypeMap = MimeTypeMap.getSingleton();
+                String mimeType = mimeTypeMap.getMimeTypeFromExtension(ext);
+                request.part(name, filename, mimeType, new File(filePath.replace("file://", "")));
             }
 
             Set<?> set = (Set<?>)this.getParams().entrySet();
@@ -97,8 +92,9 @@ public class CordovaHttpMultipartForm extends CordovaHttp implements Runnable {
             } else if (e.getCause() instanceof SSLHandshakeException) {
                 this.respondWithError("SSL handshake failed");
             } else {
-                this.respondWithError("There was an error with the request");
+                this.respondWithError("There was an error with the request. " + e.getLocalizedMessage());
             }
         }
     }
+
 }
