@@ -383,11 +383,12 @@
         NSError *error;
         for (NSString *nameFile in files) {
             NSString *filePath = files[nameFile];
-            [formData appendPartWithFileURL:filePath name:nameFile error:&error];
+            NSURL *fileURL = [NSURL fileURLWithPath:filePath];
+            [formData appendPartWithFileURL:fileURL name:nameFile error:&error];
             if (error) {
                 NSMutableDictionary *dictionary = [NSMutableDictionary dictionary];
                 [dictionary setObject:[NSNumber numberWithInt:500] forKey:@"status"];
-                [dictionary setObject:@"Could not add file to post body." forKey:@"error"];
+                [dictionary setObject:[NSString stringWithFormat:@"%@/%@", @"Could not add file to post body.", [error localizedDescription]] forKey:@"error"];
                 CDVPluginResult *pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsDictionary:dictionary];
                 [weakSelf.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
                 return;
