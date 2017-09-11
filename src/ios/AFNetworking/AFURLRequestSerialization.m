@@ -467,7 +467,9 @@ forHTTPHeaderField:(NSString *)field
 
     [self.HTTPRequestHeaders enumerateKeysAndObjectsUsingBlock:^(id field, id value, BOOL * __unused stop) {
         if (![request valueForHTTPHeaderField:field]) {
-            [mutableRequest setValue:value forHTTPHeaderField:field];
+            if (value != ( NSString *) [ NSNull null ]) {
+                [mutableRequest setValue:value forHTTPHeaderField:field];
+            }
         }
     }];
 
@@ -1227,7 +1229,9 @@ typedef enum {
 
     [self.HTTPRequestHeaders enumerateKeysAndObjectsUsingBlock:^(id field, id value, BOOL * __unused stop) {
         if (![request valueForHTTPHeaderField:field]) {
-            [mutableRequest setValue:value forHTTPHeaderField:field];
+            if (value != ( NSString *) [ NSNull null ]) {
+                [mutableRequest setValue:value forHTTPHeaderField:field];
+            }
         }
     }];
 
