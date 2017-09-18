@@ -8,7 +8,7 @@ var exec = require('cordova/exec');
 
 // Thanks Mozilla: https://developer.mozilla.org/en-US/docs/Web/API/WindowBase64/Base64_encoding_and_decoding#The_.22Unicode_Problem.22
 function b64EncodeUnicode(str) {
-    return btoa(encodeURIComponent(str).replace(/%([0-9A-F]{2})/g, function(match, p1) {
+    return btoa(encodeURIComponent(str).replace(/%([0-9A-F]{2})/g, function (match, p1) {
         return String.fromCharCode('0x' + p1);
     }));
 }
@@ -28,53 +28,57 @@ function mergeHeaders(globalHeaders, localHeaders) {
 var http = {
     headers: {},
     sslPinning: false,
-    getBasicAuthHeader: function(username, password) {
+    getBasicAuthHeader: function (username, password) {
         return {'Authorization': 'Basic ' + b64EncodeUnicode(username + ':' + password)};
     },
-    useBasicAuth: function(username, password) {
+    useBasicAuth: function (username, password) {
         this.headers.Authorization = 'Basic ' + b64EncodeUnicode(username + ':' + password);
     },
-    setHeader: function(header, value) {
+    setHeader: function (header, value) {
         this.headers[header] = value;
     },
-    enableSSLPinning: function(enable, success, failure) {
+    enableSSLPinning: function (enable, success, failure) {
         return exec(success, failure, "CordovaHttpPlugin", "enableSSLPinning", [enable]);
     },
-    acceptAllCerts: function(allow, success, failure) {
+    acceptAllCerts: function (allow, success, failure) {
         return exec(success, failure, "CordovaHttpPlugin", "acceptAllCerts", [allow]);
     },
-    validateDomainName: function(validate, success, failure) {
+    validateDomainName: function (validate, success, failure) {
         return exec(success, failure, "CordovaHttpPlugin", "validateDomainName", [validate]);
     },
-    post: function(url, params, headers, success, failure) {
+    post: function (url, params, headers, success, failure) {
         headers = mergeHeaders(this.headers, headers);
         return exec(success, failure, "CordovaHttpPlugin", "post", [url, params, headers]);
     },
-    postJson: function(url, json, headers, success, failure) {
+    postJson: function (url, json, headers, success, failure) {
         headers = mergeHeaders(this.headers, headers);
         return exec(success, failure, "CordovaHttpPlugin", "postJson", [url, json, headers]);
     },
-    putJson: function(url, json, headers, success, failure) {
+    putJson: function (url, json, headers, success, failure) {
         headers = mergeHeaders(this.headers, headers);
         return exec(success, failure, "CordovaHttpPlugin", "putJson", [url, json, headers]);
     },
-    get: function(url, params, headers, success, failure) {
+    get: function (url, params, headers, success, failure) {
         headers = mergeHeaders(this.headers, headers);
         return exec(success, failure, "CordovaHttpPlugin", "get", [url, params, headers]);
     },
-    head: function(url, params, headers, success, failure) {
+    head: function (url, params, headers, success, failure) {
         headers = mergeHeaders(this.headers, headers);
         return exec(success, failure, "CordovaHttpPlugin", "head", [url, params, headers]);
     },
-    uploadFile: function(url, params, headers, filePath, name, success, failure) {
+    uploadFile: function (url, params, headers, filePath, name, success, failure) {
         headers = mergeHeaders(this.headers, headers);
         return exec(success, failure, "CordovaHttpPlugin", "uploadFile", [url, params, headers, filePath, name]);
     },
-    multipartForm: function(url, params, files, headers, success, failure) {
+    multipartForm: function (url, params, files, headers, success, failure) {
         headers = mergeHeaders(this.headers, headers);
         return exec(success, failure, "CordovaHttpPlugin", "multipartForm", [url, params, files, headers]);
     },
-    downloadFile: function(url, params, headers, filePath, success, failure) {
+    delete: function (url, params, headers, success, failure) {
+        headers = mergeHeaders(this.headers, headers);
+        return exec(success, failure, "CordovaHttpPlugin", "delete", [url, params, headers]);
+    },
+    downloadFile: function (url, params, headers, filePath, success, failure) {
         /*
          *
          * Licensed to the Apache Software Foundation (ASF) under one
@@ -98,7 +102,7 @@ var http = {
          *
         */
         headers = mergeHeaders(this.headers, headers);
-        var win = function(result) {
+        var win = function (result) {
             var entry = new (require('cordova-plugin-file.FileEntry'))();
             entry.isDirectory = false;
             entry.isFile = true;
@@ -115,13 +119,13 @@ var http = {
 module.exports = http;
 
 if (typeof angular !== "undefined") {
-    angular.module('cordovaHTTP', []).factory('cordovaHTTP', function($timeout, $q) {
+    angular.module('cordovaHTTP', []).factory('cordovaHTTP', function ($timeout, $q) {
         function makePromise(fn, args, async) {
             var deferred = $q.defer();
 
-            var success = function(response) {
+            var success = function (response) {
                 if (async) {
-                    $timeout(function() {
+                    $timeout(function () {
                         deferred.resolve(response);
                     });
                 } else {
@@ -129,9 +133,9 @@ if (typeof angular !== "undefined") {
                 }
             };
 
-            var fail = function(response) {
+            var fail = function (response) {
                 if (async) {
-                    $timeout(function() {
+                    $timeout(function () {
                         deferred.reject(response);
                     });
                 } else {
@@ -149,43 +153,46 @@ if (typeof angular !== "undefined") {
 
         var cordovaHTTP = {
             getBasicAuthHeader: http.getBasicAuthHeader,
-            useBasicAuth: function(username, password) {
+            useBasicAuth: function (username, password) {
                 return http.useBasicAuth(username, password);
             },
-            setHeader: function(header, value) {
+            setHeader: function (header, value) {
                 return http.setHeader(header, value);
             },
-            enableSSLPinning: function(enable) {
+            enableSSLPinning: function (enable) {
                 return makePromise(http.enableSSLPinning, [enable]);
             },
-            acceptAllCerts: function(allow) {
+            acceptAllCerts: function (allow) {
                 return makePromise(http.acceptAllCerts, [allow]);
             },
-            validateDomainName: function(validate) {
+            validateDomainName: function (validate) {
                 return makePromise(http.validateDomainName, [validate]);
             },
-            post: function(url, params, headers) {
+            post: function (url, params, headers) {
                 return makePromise(http.post, [url, params, headers], true);
             },
-            postJson: function(url, json, headers) {
+            postJson: function (url, json, headers) {
                 return makePromise(http.postJson, [url, json, headers], true);
             },
-            putJson: function(url, json, headers) {
+            putJson: function (url, json, headers) {
                 return makePromise(http.putJson, [url, json, headers], true);
             },
-            get: function(url, params, headers) {
+            get: function (url, params, headers) {
                 return makePromise(http.get, [url, params, headers], true);
             },
-            head: function(url, params, headers) {
+            head: function (url, params, headers) {
                 return makePromise(http.head, [url, params, headers], true);
             },
-            uploadFile: function(url, params, headers, filePath, name) {
+            delete: function (url, params, headers) {
+                return makePromise(http.delete, [url, params, headers], true);
+            },
+            uploadFile: function (url, params, headers, filePath, name) {
                 return makePromise(http.uploadFile, [url, params, headers, filePath, name], true);
             },
-            downloadFile: function(url, params, headers, filePath) {
+            downloadFile: function (url, params, headers, filePath) {
                 return makePromise(http.downloadFile, [url, params, headers, filePath], true);
             },
-            multipartForm: function(url, params, files, headers) {
+            multipartForm: function (url, params, files, headers) {
                 return makePromise(http.multipartForm, [url, params, files, headers], true);
             }
         };
